@@ -106,8 +106,7 @@ Brand Consistency: Strong identity across all variations
 
 This dual-mode approach demonstrates your attention to detail and modern development practices while appealing to diverse client preferences!
 
+// i have already installed and setup next-themes, shadecn ui, framer-motion
 
-now....
-now make a navbar ,, footer , signin page, signup page, theme toggler,,  a loading screen, dashboard, user pofile and other components ,,,,,,,,,,,,, use clerk ,, framer-motion, shadecn , next-themes.......etc red my packages.json.....
-
-generate all components in 3 part.
+// now....
+now make a best & eye chache ui component for protfolio route.
