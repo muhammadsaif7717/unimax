@@ -1,0 +1,113 @@
+// packages.json //
+
+{
+  "name": "unimax",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "prettier --write . && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "shadecn": "npx shadcn@latest add",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "next-auth": "^4.24.11",
+    "@radix-ui/react-slot": "^1.2.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.18.1",
+    "lucide-react": "^0.516.0",
+    "next": "15.3.3",
+    "next-themes": "^0.4.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sonner": "^2.0.5",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.3",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.12",
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.3.4",
+    "typescript": "^5"
+  }
+}
+
+
+
+
+
+// Comprehensive UI Vision: Dark + Light Mode Harmony //
+
+Theme: Adaptive Premium Digital Agency with Seamless Dual-Mode Experience
+Unified Color System:
+Dark Mode:
+
+Background: Deep Space (#0A0A0F) → Rich Navy (#0F172A)
+Surfaces: Elevated Dark (#1A1B23) with neon borders
+Primary: Electric Blue (#00D9FF) + Cyan Glow (#06B6D4)
+Accent: Hot Orange (#FF8C42) + Magenta (#FF1CF7)
+Text: Pure White (#FFFFFF) + Cool Gray (#E2E8F0)
+
+Light Mode:
+
+Background: Clean White (#FFFFFF) → Soft Gray (#F8FAFC)
+Surfaces: Pure White (#FFFFFF) with subtle shadows
+Primary: Professional Blue (#1E40AF) + Trust Blue (#3B82F6)
+Accent: Vibrant Orange (#F97316) + Purple (#8B5CF6)
+Text: Rich Black (#1F2937) + Warm Gray (#64748B)
+
+Adaptive Motion Design:
+Universal Animations:
+
+Hero: Floating elements with theme-aware particle colors
+Cards: 3D transforms with mode-specific glow/shadow effects
+Buttons: Morphing with contextual lighting (glow/shadow)
+Scroll: Reveal animations with theme-appropriate easing
+Hover: Magnetic effects with adaptive color schemes
+
+Mode-Specific Effects:
+
+Dark: Neon glows, light trails, cyberpunk aesthetics
+Light: Soft shadows, clean transitions, professional elegance
+
+Smart Theme Transitions:
+
+Seamless Switching: Smooth color morphing between modes
+State Persistence: Remembers user preference
+System Sync: Follows device theme automatically
+Component Variants: Framer Motion variants for each mode
+
+Unified Component Strategy:
+Cross-Mode Features:
+
+Navigation: Smooth theme toggle with icon animation
+Services: Cards adapt lighting effects based on mode
+Portfolio: Filter animations work beautifully in both themes
+Contact: Form validation with theme-appropriate feedback
+Footer: Consistent branding across both modes
+
+User Experience Benefits:
+
+Professional Versatility: Light mode for corporate clients
+Tech Appeal: Dark mode for developer/startup audiences
+Accessibility: High contrast ratios in both modes
+Performance: Optimized animations regardless of theme
+Brand Consistency: Strong identity across all variations
+
+This dual-mode approach demonstrates your attention to detail and modern development practices while appealing to diverse client preferences!
+
+
+now....
+now make a navbar ,, footer , signin page, signup page, theme toggler,,  a loading screen, dashboard, user pofile and other components ,,,,,,,,,,,,, use clerk ,, framer-motion, shadecn , next-themes.......etc red my packages.json.....
+
+generate all components in 3 part.
