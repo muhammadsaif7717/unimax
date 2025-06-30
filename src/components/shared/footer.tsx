@@ -17,8 +17,16 @@ import {
   Zap,
   Send,
 } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 const Footer = () => {
+  const pathName = usePathname();
+  const isDashboard = pathName.startsWith('/dashboard');
+  const isAuth = pathName.startsWith('/auth');
+  if (isAuth || isDashboard) {
+    return null;
+  }
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

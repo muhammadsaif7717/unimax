@@ -1,17 +1,22 @@
-// components/navbar.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Navbar = () => {
+  // All hooks must be called before any conditional return
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const router = useRouter();
+  const pathName = usePathname();
+
+  const isDashboard = pathName.startsWith('/dashboard');
+  const isAuth = pathName.startsWith('/auth');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +25,11 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Conditional return must come after all hooks
+  if (isAuth || isDashboard) {
+    return null;
+  }
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -115,13 +125,14 @@ const Navbar = () => {
             <ThemeToggle />
 
             {/* CTA Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="hidden items-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-2 font-medium text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl sm:flex dark:from-cyan-500 dark:to-blue-500 dark:hover:from-cyan-400 dark:hover:to-blue-400"
-            >
-              Get Started
-            </motion.button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/auth/sign-in"
+                className="hidden items-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-2 font-medium text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl sm:flex dark:from-cyan-500 dark:to-blue-500 dark:hover:from-cyan-400 dark:hover:to-blue-400"
+              >
+                Get Started
+              </Link>
+            </motion.div>
 
             {/* Mobile Menu Button */}
             <motion.button
