@@ -187,15 +187,17 @@ const Navbar = () => {
                   </motion.div>
                 ))}
 
-                <motion.button
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="mt-4 w-full rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg dark:from-cyan-500 dark:to-blue-500"
+
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Get Started
-                </motion.button>
+                  <Link href="/auth/sign-in" className="mt-4 w-full rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg dark:from-cyan-500 dark:to-blue-500">
+                   Get Started
+                  </Link>
+                </motion.div>
               </div>
             </motion.div>
           )}
