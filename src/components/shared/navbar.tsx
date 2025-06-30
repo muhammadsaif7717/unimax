@@ -48,11 +48,10 @@ const Navbar = () => {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${isScrolled
           ? 'border-b border-gray-200/20 bg-white/80 shadow-xl backdrop-blur-xl dark:border-gray-800/20 dark:bg-slate-900/80'
           : 'bg-transparent'
-      }`}
+        }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between lg:h-20">
@@ -191,11 +190,11 @@ const Navbar = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-
+                  className='mt-4 w-full rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg dark:from-cyan-500 dark:to-blue-500'
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Link href="/auth/sign-in" className="mt-4 w-full rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg dark:from-cyan-500 dark:to-blue-500">
-                   Get Started
+                  <Link href="/auth/sign-in" className="w-full flex items-center justify-center text-center">
+                    Get Started
                   </Link>
                 </motion.div>
               </div>
