@@ -18,6 +18,9 @@ import {
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
+import axios from 'axios';
+import getURL from '@/lib/getURL';
+import { useRouter } from 'next/navigation';
 
 // --- Types ---
 type AccountType = 'individual' | 'company';
@@ -80,6 +83,8 @@ const SignUpPage: React.FC = () => {
   const [particles, setParticles] = useState<Particle[]>([]);
   const [constellation, setConstellation] = useState<ConstellationStar[]>([]);
 
+  const router = useRouter();
+
   useEffect(() => {
     const newParticles: Particle[] = Array.from({ length: 25 }, (_, i) => ({
       id: i,
@@ -107,8 +112,40 @@ const SignUpPage: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    setIsLoading(false);
+
+    try {
+      // Simulate form submission
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+      const url = await getURL();
+      // Here you would typically send the data to your backend
+      const response = await axios.post(`${url}/users/post`, formData);
+
+      // Optionally, handle the response (e.g., show a success message)
+      if (response.status == 200) {
+        alert('user created');
+      }
+
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        company: '',
+        password: '',
+        confirmPassword: '',
+        accountType: 'individual',
+        agreeToTerms: false,
+        subscribeNewsletter: true,
+      });
+      setCurrentStep(1);
+      setFocusedField('');
+      setIsLoading(false);
+      router.push('/');
+    } catch (error) {
+      console.log('Error submitting form:', error);
+    }
   };
 
   const nextStep = () => {
