@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { Card } from '../ui/card';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import Image from 'next/image';
 
 const TeamSection = () => {
   const { theme } = useTheme();
@@ -12,22 +13,16 @@ const TeamSection = () => {
 
   const team = [
     {
-      name: 'Alex Chen',
-      role: 'Creative Director',
-      bio: 'Visionary designer with 8+ years crafting digital experiences that captivate and convert.',
-      image: '👨‍💻',
+      name: 'MD. Nahidul Islam',
+      role: 'Founder & CEO',
+      bio: 'Local SEO expert with a passion for helping businesses grow through innovative digital strategies.',
+      image: 'https://i.ibb.co/6c52sgtP/1000283255-01.jpg',
     },
     {
-      name: 'Sarah Williams',
-      role: 'Tech Lead',
-      bio: 'Full-stack architect passionate about building scalable, performant applications.',
-      image: '👩‍💻',
-    },
-    {
-      name: 'Marcus Johnson',
-      role: 'Strategy Director',
-      bio: 'Business strategist who bridges the gap between technology and market success.',
-      image: '👨‍💼',
+      name: 'MD. Saif Islam',
+      role: 'Founder & CEO',
+      bio: 'Full-stack developer specializing in building scalable web applications with a focus on user experience.',
+      image: 'https://i.ibb.co/Cp0cjmx7/509427353-701051856128245-8502555237454319155-n.jpg',
     },
   ];
 
@@ -57,7 +52,7 @@ const TeamSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2">
           {team.map((member, index) => (
             <motion.div
               key={index}
@@ -76,7 +71,13 @@ const TeamSection = () => {
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {member.image}
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    width={96}
+                    height={96}
+                    className="rounded-full"
+                  />
                 </motion.div>
                 <h3
                   className={`mb-2 text-2xl font-bold ${
