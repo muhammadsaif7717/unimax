@@ -12,9 +12,9 @@ const AboutPage = () => {
 
       <main>
         <HeroSection />
+        <TeamSection />
         <StatsSection />
         <ValuesSection />
-        <TeamSection />
         <CTASection />
       </main>
     </div>
