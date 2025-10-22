@@ -18,9 +18,8 @@ import {
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
-import axios from 'axios';
-import getURL from '@/lib/getURL';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 // --- Types ---
 type AccountType = 'individual' | 'company';
@@ -66,6 +65,10 @@ const SignUpPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string>('');
+  const [error, setError] = useState('');
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  console.log(error);
 
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -114,35 +117,44 @@ const SignUpPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Simulate form submission
-      if (formData.password !== formData.confirmPassword) {
-        throw new Error('Passwords do not match');
-      }
-      const url = await getURL();
-      // Here you would typically send the data to your backend
-      const response = await axios.post(`${url}/users/post`, formData);
-
-      // Optionally, handle the response (e.g., show a success message)
-      if (response.status == 201) {
-        alert('user created');
-      }
-
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        company: '',
-        password: '',
-        confirmPassword: '',
-        accountType: 'individual',
-        agreeToTerms: false,
-        subscribeNewsletter: true,
+      const result = await signIn('credentials', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        password: formData.password,
+        accountType: formData.accountType,
+        agreeToTerms: formData.agreeToTerms,
+        subscribeNewsletter: formData.subscribeNewsletter,
+        role: 'user',
+        isSignUp: true,
+        redirect: false,
+        callbackUrl,
       });
-      setCurrentStep(1);
-      setFocusedField('');
-      setIsLoading(false);
-      router.push('/');
+
+      if (result?.error) {
+        setError(
+          result.error === 'CredentialsSignin' ? 'User already exists' : 'Something went wrong'
+        );
+      } else {
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          company: '',
+          password: '',
+          confirmPassword: '',
+          accountType: 'individual',
+          agreeToTerms: false,
+          subscribeNewsletter: true,
+        });
+        setCurrentStep(1);
+        setFocusedField('');
+        setIsLoading(false);
+        router.push(callbackUrl); // Redirect to dashboard or home page
+      }
     } catch (error) {
       console.log('Error submitting form:', error);
     }

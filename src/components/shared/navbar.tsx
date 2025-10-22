@@ -2,18 +2,23 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 import { usePathname, useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Navbar = () => {
   // All hooks must be called before any conditional return
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const router = useRouter();
   const pathName = usePathname();
+  const { data: session, status } = useSession();
+  console.log(session?.user);
 
   const isDashboard = pathName.startsWith('/dashboard');
   const isAuth = pathName.startsWith('/auth');
@@ -24,6 +29,18 @@ const Navbar = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.user-menu-container')) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Conditional return must come after all hooks
@@ -42,6 +59,94 @@ const Navbar = () => {
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ];
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
+    setIsUserMenuOpen(false);
+  };
+
+  const UserMenu = () => (
+    <div className="user-menu-container relative">
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+        className="flex items-center space-x-2 rounded-full bg-gray-100 p-1 transition-colors duration-200 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+      >
+        {session?.user?.image ? (
+          <Image
+            src={session.user.image}
+            alt={session.user.name || 'User'}
+            width={32}
+            height={32}
+            className="rounded-full"
+          />
+        ) : (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-cyan-400">
+            <User className="h-4 w-4 text-white" />
+          </div>
+        )}
+      </motion.button>
+
+      <AnimatePresence>
+        {isUserMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full right-0 mt-2 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl backdrop-blur-xl dark:border-gray-700 dark:bg-slate-800"
+          >
+            {/* User Info */}
+            <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">Signed in as</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {session?.user?.email || session?.user?.name || 'User'}
+              </p>
+            </div>
+
+            {/* Menu Items */}
+            <div className="py-2">
+              <motion.button
+                whileHover={{ x: 4 }}
+                onClick={() => {
+                  router.push('/dashboard');
+                  setIsUserMenuOpen(false);
+                }}
+                className="flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-slate-700 dark:hover:text-cyan-400"
+              >
+                <LayoutDashboard className="mr-3 h-4 w-4" />
+                Dashboard
+              </motion.button>
+
+              <motion.button
+                whileHover={{ x: 4 }}
+                onClick={() => {
+                  router.push('/settings');
+                  setIsUserMenuOpen(false);
+                }}
+                className="flex w-full items-center px-4 py-2 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-slate-700 dark:hover:text-cyan-400"
+              >
+                <Settings className="mr-3 h-4 w-4" />
+                Settings
+              </motion.button>
+
+              <div className="border-t border-gray-200 dark:border-gray-700">
+                <motion.button
+                  whileHover={{ x: 4 }}
+                  onClick={handleSignOut}
+                  className="flex w-full items-center px-4 py-2 text-sm text-red-600 transition-colors duration-200 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                >
+                  <LogOut className="mr-3 h-4 w-4" />
+                  Sign Out
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 
   return (
     <motion.nav
@@ -62,7 +167,7 @@ const Navbar = () => {
             onClick={() => {
               router.push('/');
             }}
-            className="flex items-center space-x-2"
+            className="flex cursor-pointer items-center space-x-2"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-cyan-400 dark:from-cyan-400 dark:to-blue-500">
               <span className="text-lg font-bold text-white">U</span>
@@ -124,15 +229,26 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
 
-            {/* CTA Button */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                href="/auth/sign-in"
-                className="hidden items-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-2 font-medium text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl sm:flex dark:from-cyan-500 dark:to-blue-500 dark:hover:from-cyan-400 dark:hover:to-blue-400"
-              >
-                Get Started
-              </Link>
-            </motion.div>
+            {/* Authentication State */}
+            {status === 'loading' ? (
+              // Loading state
+              <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+            ) : session ? (
+              // Signed in - Show user menu
+              <div className="hidden sm:block">
+                <UserMenu />
+              </div>
+            ) : (
+              // Not signed in - Show Get Started button
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  href="/auth/sign-in"
+                  className="hidden items-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-2 font-medium text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl sm:flex dark:from-cyan-500 dark:to-blue-500 dark:hover:from-cyan-400 dark:hover:to-blue-400"
+                >
+                  Get Started
+                </Link>
+              </motion.div>
+            )}
 
             {/* Mobile Menu Button */}
             <motion.button
@@ -187,20 +303,58 @@ const Navbar = () => {
                   </motion.div>
                 ))}
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="mt-4 w-full rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg dark:from-cyan-500 dark:to-blue-500"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Link
-                    href="/auth/sign-in"
-                    className="flex w-full items-center justify-center text-center"
+                {/* Mobile Authentication State */}
+                {session ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="mt-4 space-y-3"
                   >
-                    Get Started
-                  </Link>
-                </motion.div>
+                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        Signed in as
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        {session.user?.email || session.user?.name || 'User'}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        router.push('/dashboard');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex w-full items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg dark:from-cyan-500 dark:to-blue-500"
+                    >
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </button>
+
+                    <button
+                      onClick={handleSignOut}
+                      className="flex w-full items-center justify-center rounded-full border border-red-200 bg-white px-6 py-3 font-medium text-red-600 shadow-sm hover:bg-red-50 dark:border-red-800 dark:bg-slate-900 dark:text-red-400 dark:hover:bg-red-900/20"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="mt-4 w-full rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 font-medium text-white shadow-lg dark:from-cyan-500 dark:to-blue-500"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Link
+                      href="/auth/sign-in"
+                      className="flex w-full items-center justify-center text-center"
+                    >
+                      Get Started
+                    </Link>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           )}

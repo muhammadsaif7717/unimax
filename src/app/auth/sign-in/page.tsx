@@ -3,6 +3,8 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Zap, Shield, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type Particle = {
   id: number;
@@ -19,7 +21,13 @@ const SignInPage: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [focusedField, setFocusedField] = useState<string>('');
+  const [error, setError] = useState('');
+  const [checked, setchecked] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const router = useRouter();
+  console.log(error);
 
   useEffect(() => {
     // Always generate particles for dark mode (they'll only show when dark mode is active)
@@ -37,8 +45,28 @@ const SignInPage: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
+    setError('');
+
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        isSignUp: 'false',
+        redirect: false,
+        callbackUrl,
+      });
+
+      if (result?.error) {
+        setError(result.error); // will now show actual error messages
+      } else {
+        router.push(callbackUrl);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Animation variants
@@ -253,6 +281,7 @@ const SignInPage: React.FC = () => {
                 <label className="flex items-center">
                   <motion.input
                     type="checkbox"
+                    onClick={() => setchecked(true)}
                     className="mr-2 rounded border-gray-300 bg-white text-[#3B82F6] focus:ring-[#3B82F6] dark:border-[#334155] dark:bg-[#0A0A0F] dark:text-[#00D9FF] dark:focus:ring-[#00D9FF]"
                     whileHover={{ scale: 1.1 }}
                   />
@@ -270,8 +299,8 @@ const SignInPage: React.FC = () => {
               {/* Sign In Button */}
               <motion.button
                 type="submit"
-                disabled={isLoading}
-                className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#1E40AF] to-[#3B82F6] px-4 py-3 font-semibold text-white transition-all duration-300 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 dark:from-[#00D9FF] dark:to-[#06B6D4] dark:text-[#0A0A0F] dark:hover:shadow-[0_0_30px_rgba(0,217,255,0.4)]"
+                disabled={isLoading || checked === false}
+                className={`flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#1E40AF] to-[#3B82F6] px-4 py-3 font-semibold text-white transition-all duration-300 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 dark:from-[#00D9FF] dark:to-[#06B6D4] dark:text-[#0A0A0F] dark:hover:shadow-[0_0_30px_rgba(0,217,255,0.4)]`}
                 variants={itemVariants}
                 whileHover={{ scale: isLoading ? 1 : 1.05, y: isLoading ? 0 : -2 }}
                 whileTap={{ scale: 0.98 }}
